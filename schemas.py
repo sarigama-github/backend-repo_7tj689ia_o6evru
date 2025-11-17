@@ -13,8 +13,9 @@ Model name is converted to lowercase for the collection name:
 
 from pydantic import BaseModel, Field
 from typing import Optional
+from datetime import datetime
 
-# Example schemas (replace with your own):
+# Example schemas (keep examples but add our Token schema)
 
 class User(BaseModel):
     """
@@ -38,11 +39,18 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
-
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+# Reward Token schema
+class Token(BaseModel):
+    """
+    Reward tokens to share with clients
+    Collection name: "token"
+    """
+    code: str = Field(..., description="Unique token code to share")
+    value: float = Field(0, ge=0, description="Reward value associated with the token")
+    currency: str = Field("USD", description="Currency code for value")
+    purpose: Optional[str] = Field(None, description="Reason or campaign for this token")
+    expires_at: Optional[datetime] = Field(None, description="When the token expires (UTC)")
+    redeemed: bool = Field(False, description="Whether the token has been redeemed")
+    redeemed_by: Optional[str] = Field(None, description="Identifier of the client who redeemed it")
+    redeemed_at: Optional[datetime] = Field(None, description="Timestamp when redeemed (UTC)")
+    notes: Optional[str] = Field(None, description="Internal notes")
